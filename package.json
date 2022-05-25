@@ -1,0 +1,26 @@
+{
+  "name": "book-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "scrape:tapas": "ts-node ./commands/scrape.ts tapas",
+    "refresh": "ts-node ./commands/refresh.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --config .prettierrc './**/*.ts' --write"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "dotenv-json": "^1.0.0",
+    "env.json": "^2.0.1",
+    "moment": "^2.29.3",
+    "puppeteer": "^13.5.2"
+  },
+  "devDependencies": {
+    "prettier": "^2.6.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
