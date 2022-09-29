@@ -1,25 +1,40 @@
 import { Page } from 'puppeteer';
 import { infiniteScroll } from '../../browser/page';
+import createLogger from '../../logging/logger';
 import { TapasSeries } from './types';
+
+const logger = createLogger('scrape.ts');
 
 const TAPAS_URL = 'https://tapas.io/comics?b=ORIGINAL&g=0&f=NONE';
 
-function extractItems() {
-  const extractedElements = document.querySelectorAll('.content__list .list__item');
-  const items = [];
-  for (let element of extractedElements) {
-    items.push(element);
+export const scrapeTapasSeries = async (page: Page) => {
+  const seriesUrls = await scrapeSeriesUrls(page);
+  const seriesList: TapasSeries[] = [];
+  let i = 0;
+  for await (const seriesUrl of seriesUrls) {
+    logger.info(`Progress: ${i + 1}/${seriesUrls.length}`);
+    try {
+      const series = await scrapeSeries(page, seriesUrl);
+      seriesList.push(series);
+      i = i + 1;
+      logger.debug(`Scraped series ${JSON.stringify(series)}`);
+    } catch (e) {
+      logger.error(`Unable to scrape series: ${(e as Error).stack}`);
+    }
   }
-  return items.map((item) => item.querySelector('a').href);
-}
-
-const waitForEpisodeLoadingToBeHidden = async (page: Page) => {
-  await page.waitForFunction(() =>
-    document.querySelector('.js-episode-loading-indicator').classList.contains('hidden')
-  );
+  return seriesList;
 };
 
-const extractSeries = async (page: Page, seriesUrl: string) => {
+const scrapeSeriesUrls = async (page: Page) => {
+  logger.info(`Scraping series list from ${TAPAS_URL}...`);
+  await page.goto(TAPAS_URL);
+  await page.waitForSelector('.content__list');
+  await infiniteScroll(page, waitForSeriesListLoadingToBeHidden);
+  return page.evaluate(extractItems);
+};
+
+const scrapeSeries = async (page: Page, seriesUrl: string) => {
+  logger.info(`Scraping series from ${seriesUrl}/info...`);
   await page.goto(`${seriesUrl}/info`);
   await page.waitForSelector('.series-root');
   await infiniteScroll(page, waitForEpisodeLoadingToBeHidden);
@@ -30,7 +45,7 @@ const extractSeriesInfo = () => {
   const title = document.querySelector('.title').textContent.trim();
   const description = document.querySelector('.description__body').textContent.trim();
   const episodeCount = Number.parseInt(document.querySelector('.episode-cnt').textContent.split(' ')[0]);
-  const coverUrl = document.querySelector('.thumb img').getAttribute('src');
+  const coverUrl = document.querySelector<HTMLImageElement>('.thumb img').src;
   const backgroundUrl = document.querySelector<HTMLDivElement>('.js-top-banner').style.backgroundImage.slice(5, -2);
   const genres = [];
   const genreButtons = document.querySelectorAll('.section__top .info--top .genre-btn');
@@ -71,44 +86,21 @@ const extractSeriesInfo = () => {
   } as TapasSeries;
 };
 
-const extractSeriesUrls = async (page: Page) => {
-  let items = [];
-  let itemsLength = -1;
-  console.log('Finding list of series...');
-  await page.goto(TAPAS_URL);
-  await page.waitForSelector('.content__list');
-  try {
-    let previousHeight;
-    while (items.length != itemsLength) {
-      itemsLength = items.length;
-      items = await page.evaluate(extractItems);
-      previousHeight = await page.evaluate(() => document.body.scrollHeight);
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await page.waitForFunction(
-        (prevHeight: number) => document.body.scrollHeight > prevHeight,
-        { timeout: 5000 },
-        previousHeight
-      );
-      await page.waitForFunction(() => document.querySelector('#loading-indicator').classList.contains('hidden'));
-    }
-  } catch (e) {}
-  return items;
+const extractItems = () => {
+  const extractedElements = document.querySelectorAll('.content__list .list__item');
+  const items = [];
+  for (let element of extractedElements) {
+    items.push(element);
+  }
+  return items.map((item) => item.querySelector('a').href);
 };
 
-export const scrapeTapasSeries = async (page: Page) => {
-  console.log(`Navigating to ${TAPAS_URL}...`);
+const waitForSeriesListLoadingToBeHidden = async (page: Page) => {
+  await page.waitForFunction(() => document.querySelector('#loading-indicator').classList.contains('hidden'));
+};
 
-  const seriesUrls = await extractSeriesUrls(page);
-
-  console.log('Extracting individual series info...');
-  const seriesList: TapasSeries[] = [];
-  let i = 0;
-  for await (const seriesUrl of seriesUrls) {
-    console.log(`Progress: ${i + 1}/${seriesUrls.length}`);
-    const series = await extractSeries(page, seriesUrl);
-    console.log(series);
-    seriesList.push(series);
-    i = i + 1;
-  }
-  return seriesList;
+const waitForEpisodeLoadingToBeHidden = async (page: Page) => {
+  await page.waitForFunction(() =>
+    document.querySelector('.js-episode-loading-indicator').classList.contains('hidden')
+  );
 };

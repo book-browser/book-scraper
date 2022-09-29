@@ -1,6 +1,14 @@
 import axios from 'axios';
 import { environment } from '../environment/environment';
 import { Episode, Page, Party, Series, SeriesQuery } from './types';
+import createLogger from '../logging/logger';
+
+const logger = createLogger('api.ts');
+
+axios.interceptors.request.use((request) => {
+  logger.info(`Starting Request ${request.method.toLocaleUpperCase()} ${request.url}`);
+  return request;
+});
 
 export const createOrUpdateSeries = async (series: Partial<Series>) => {
   return (
