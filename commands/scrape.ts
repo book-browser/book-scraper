@@ -1,8 +1,7 @@
 import { Page } from 'puppeteer';
 import { startBrowser } from '../browser';
-import { scrapeTapasSeries } from '../websites/tapas';
-import script from '../websites/tapas/new-tapas';
-import { runScript } from '../websites/tapas/test';
+import script from '../websites/tapas/script';
+import { runScript } from '../websites/scrape';
 
 const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   try {
@@ -20,7 +19,6 @@ const website = process.argv.slice(2)[0];
 
 switch (website) {
   case 'tapas':
-    // scrape(scrapeTapasSeries).then(JSON.stringify).then(console.log);
     scrape((page: Page) => runScript(page, script))
       .then(JSON.stringify)
       .then(console.log);

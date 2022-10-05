@@ -1,28 +1,7 @@
-import { Serializable } from 'puppeteer';
-
-export declare type TapasSeries = {
-  title: string;
-  description: string;
-  episodeCount: number;
-  coverUrl: string;
-  backgroundUrl: string;
-  tapasUrl: string;
-  creators: string[];
-  genres: TapasGenre[];
-  episodes: TapasEpisode[];
-};
-
-export declare type TapasEpisode = {
-  title: string;
-  thumbnail: string;
-  releaseDate: string;
-  tapasUrl: string;
-};
-
 export declare type ScrapeProperties = {
   page: PageProperties;
   infiniteScroll: InfiniteScrollProperties;
-  values: ScrapedFieldProperty;
+  values: FunctionFieldProperty | ScrapedFieldProperty;
 };
 
 export declare type SeriesRequest = {
@@ -31,9 +10,10 @@ export declare type SeriesRequest = {
   seriesUrl: string;
   coverUrl: string;
   backgroundUrl?: string;
-  creators: string[];
-  genres: string[];
-  episodes: EpisodeRequest[];
+  creators?: string[];
+  publishers?: string[];
+  genres?: string[];
+  episodes?: EpisodeRequest[];
 };
 
 export declare type EpisodeRequest = {
@@ -47,19 +27,20 @@ export declare type SeriesScrapeProperties = {
   page: PageProperties;
   infiniteScroll: InfiniteScrollProperties;
   attributes: {
-    title: ScrapedFieldProperty;
-    description: ScrapedFieldProperty;
-    seriesUrl: ScrapedFieldProperty;
-    coverUrl: ScrapedFieldProperty;
-    backgroundUrl: ScrapedFieldProperty;
-    genres: ScrapedFieldProperty;
-    creators: ScrapedFieldProperty;
+    title: FunctionFieldProperty | ScrapedFieldProperty;
+    description: FunctionFieldProperty | ScrapedFieldProperty;
+    seriesUrl: FunctionFieldProperty | ScrapedFieldProperty;
+    coverUrl: FunctionFieldProperty | ScrapedFieldProperty;
+    backgroundUrl: FunctionFieldProperty | ScrapedFieldProperty;
+    genres: FunctionFieldProperty | ScrapedFieldProperty;
+    creators: FunctionFieldProperty | ScrapedFieldProperty;
+    publishers: FunctionFieldProperty | ScrapedFieldProperty;
     episodes: {
       attributes: {
-        thumbnailUrl: ScrapedFieldProperty;
-        title: ScrapedFieldProperty;
-        episodeUrl: ScrapedFieldProperty;
-        releaseDate: ScrapedFieldProperty;
+        thumbnailUrl: FunctionFieldProperty | ScrapedFieldProperty;
+        title: FunctionFieldProperty | ScrapedFieldProperty;
+        episodeUrl: FunctionFieldProperty | ScrapedFieldProperty;
+        releaseDate: FunctionFieldProperty | ScrapedFieldProperty;
       };
       filter: (elem: Element) => boolean;
       selector: string;
@@ -85,12 +66,14 @@ export declare type InfiniteScrollProperties = {
   hiddenClass: string;
 };
 
+export declare type FunctionFieldProperty = () => string | string[];
+
 export declare type ScrapedFieldProperty = {
   selector?: string;
   selectorAll?: string;
   path?: string;
   attributes?: {
-    [key: string]: ScrapedFieldProperty;
+    [key: string]: FunctionFieldProperty | ScrapedFieldProperty;
   };
   filter?: (element: HTMLElement) => boolean;
   formatters?: (string | ((field: string) => string))[];
@@ -101,18 +84,3 @@ export declare type SerializableScrapedFieldProperty = {
   selectorAll?: string;
   path?: string;
 };
-
-export declare type TapasGenre =
-  | 'romance'
-  | 'action'
-  | 'fantasy'
-  | 'drama'
-  | 'bl'
-  | 'gl'
-  | 'lgbtq+'
-  | 'comedy'
-  | 'slice-of-life'
-  | 'mystery'
-  | 'science-fiction'
-  | 'gaming'
-  | 'horror';

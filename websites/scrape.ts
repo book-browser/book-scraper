@@ -1,6 +1,6 @@
 import { ElementHandle, Page } from 'puppeteer';
-import { infiniteScroll } from '../../browser/page';
-import createLogger from '../../logging/logger';
+import { infiniteScroll } from '../browser/page';
+import createLogger from '../logging/logger';
 import {
   InfiniteScrollProperties,
   PageProperties,
@@ -32,6 +32,8 @@ export const runScript = async (page: Page, script: ScrapeScript) => {
   await script(tasks);
 
   logger.debug(`series list: ${JSON.stringify(seriesList, null, 2)}`);
+
+  return seriesList;
 };
 
 const scrapeValues = async (page: Page, properties: ScrapeProperties) => {
@@ -39,7 +41,11 @@ const scrapeValues = async (page: Page, properties: ScrapeProperties) => {
   logger.debug(`scrape properties: ${JSON.stringify(properties, null, 2)}`);
   await navigateToPage(page, properties.page);
   await waitForInfiniteScroll(page, properties.infiniteScroll);
-  return extractProperty(await page.$('body'), properties.values);
+
+  if (typeof properties.values === 'object') {
+    return extractProperty(await page.$('body'), properties.values);
+  }
+  return properties.values();
 };
 
 const scrapeSeries = async (page: Page, properties: SeriesScrapeProperties) => {
@@ -133,7 +139,11 @@ const filterHandles = async (handles: ElementHandle<Element>[], filter: ScrapedF
 const extractProperties = async (container: ElementHandle, property: ScrapedFieldProperty) => {
   const obj = {};
   for await (const [key, childProperty] of Object.entries(property.attributes)) {
-    obj[key] = await extractProperty(container, childProperty);
+    if (typeof childProperty === 'object') {
+      obj[key] = await extractProperty(container, childProperty);
+    } else {
+      obj[key] = childProperty();
+    }
   }
   return obj;
 };

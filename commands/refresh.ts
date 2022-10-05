@@ -1,16 +1,11 @@
 import { Page } from 'puppeteer';
-import {
-  createOrUpdateEpisode,
-  createOrUpdateSeries,
-  findAllSeries,
-  mapTapasEpisodeToEpisode,
-  mapTapasSeriesToSeries,
-  Series
-} from '../book-browser';
+import { mapEpisodeRequestToEpisode, mapSeriesRequestToSeries, Series } from '../book-browser';
+import { createOrUpdateEpisode, createOrUpdateSeries, findAllSeries } from '../book-browser/api';
 import { startBrowser } from '../browser';
 import createLogger from '../logging/logger';
-import { series as tapasSeriesList } from '../series';
-import { SeriesRequest, TapasEpisode, TapasSeries } from '../websites/tapas';
+// import { series as seriesList } from '../series';
+import { EpisodeRequest, runScript, SeriesRequest } from '../websites';
+import script from '../websites/tapas/script';
 
 const logger = createLogger('refresh.ts');
 
@@ -27,43 +22,42 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
 };
 
 const refresh = async () => {
-  // const tapasSeriesList = await scrape(scrapeTapasSeries);
-  for await (const tapasSeries of tapasSeriesList) {
-    // await createOrUpdateTapasSeries(tapasSeries);
+  const seriesList = await scrape((page: Page) => runScript(page, script));
+  for await (const series of seriesList) {
+    await createOrUpdateSeriesFromSeriesRequest(series);
   }
 };
 
-// const createOrUpdateTapasSeries = async (tapasSeries: TapasSeries) => {
-//   logger.info(`Creating or updating tapas series ${tapasSeries.title}`);
-//   const seriesList = await findAllSeries({ link: tapasSeries.tapasUrl });
-//   if (seriesList.totalPages > 1) {
-//     logger.info(`Ignoring "${tapasSeries.title}". Multiple existing entries discovered`);
-//     return;
-//   }
-//   let series: Partial<Series>;
-//   if (seriesList.totalPages === 0) {
-//     logger.info(`Adding new series "${tapasSeries.title}"`);
-//     series = await mapTapasSeriesToSeries(tapasSeries);
-//   } else {
-//     logger.info(`Refreshing existing series "${tapasSeries.title}"`);
-//     series = {
-//       ...seriesList.items[0],
-//       ...(await mapTapasSeriesToSeries(tapasSeries, seriesList.items[0]))
-//     };
-//   }
-//   const finalSeries = await createOrUpdateSeries(series);
-//   for await (const tapasEpisode of tapasSeries.episodes) {
-//     await createOrUpdateTapasEpisode(finalSeries, tapasEpisode);
-//   }
-// };
+const createOrUpdateSeriesFromSeriesRequest = async (seriesRequest: SeriesRequest) => {
+  logger.info(`Creating or updating tapas series ${seriesRequest.title}`);
+  const seriesList = await findAllSeries({ link: seriesRequest.seriesUrl });
+  if (seriesList.items.length > 1) {
+    logger.info(`Ignoring "${seriesRequest.title}". Multiple existing entries discovered`);
+    return;
+  }
+  let series: Partial<Series>;
+  if (seriesList.items.length === 0) {
+    logger.info(`Adding new series "${seriesRequest.title}"`);
+    series = await mapSeriesRequestToSeries(seriesRequest);
+  } else {
+    logger.info(`Refreshing existing series "${seriesRequest.title}"`);
+    series = await mapSeriesRequestToSeries(seriesRequest, seriesList.items[0]);
+  }
 
-// const createOrUpdateTapasEpisode = async (series: Series, tapasEpisode: TapasEpisode) => {
-//   logger.info(`Creating or updating episode ${tapasEpisode.title}`);
-//   logger.debug(JSON.stringify({ series, tapasEpisode }));
-//   const episode = await mapTapasEpisodeToEpisode(tapasEpisode, series);
-//   await createOrUpdateEpisode(episode);
-// };
+  const finalSeries = await createOrUpdateSeries(series);
+
+  for await (const episodeRequest of seriesRequest.episodes) {
+    await createOrUpdateEpisodeFromEpisodeRequest(episodeRequest, finalSeries);
+  }
+};
+
+const createOrUpdateEpisodeFromEpisodeRequest = async (episodeRequest: EpisodeRequest, series: Series) => {
+  logger.info(`Creating or updating episode ${episodeRequest.title} from series ${series.title}`);
+  logger.debug(JSON.stringify({ episodeRequest }));
+  const episode = await mapEpisodeRequestToEpisode(episodeRequest, series);
+  await createOrUpdateEpisode(episode);
+};
 
 refresh()
   .then()
-  .catch((err) => logger.error(JSON.stringify(err.response.data)));
+  .catch((err) => logger.error(err));
