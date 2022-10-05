@@ -6,7 +6,11 @@ import createLogger from '../logging/logger';
 const logger = createLogger('api.ts');
 
 axios.interceptors.request.use((request) => {
-  logger.info(`Starting Request ${request.method.toLocaleUpperCase()} ${request.url}`);
+  if (request.method.toLowerCase() === 'get') {
+    logger.debug(`Starting Request ${request.method.toLocaleUpperCase()} ${request.url}`);
+  } else {
+    logger.info(`Starting Request ${request.method.toLocaleUpperCase()} ${request.url}`);
+  }
   return request;
 });
 
