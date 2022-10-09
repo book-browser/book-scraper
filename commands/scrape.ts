@@ -2,6 +2,10 @@ import { Browser, Page } from 'puppeteer-core';
 import { startBrowser } from '../browser';
 import script from '../websites/tapas/script';
 import { runScript } from '../websites/scrape';
+import { environment } from '../environment/environment';
+import createLogger from '../logging/logger';
+
+const logger = createLogger('commands/scrape.ts');
 
 const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   let browser: Browser;
@@ -9,7 +13,6 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
     browser = await startBrowser();
     const page = await browser.newPage();
     const results = await scrapeFn(page);
-
     return results;
   } catch (err) {
     console.error(err);
@@ -18,7 +21,10 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   }
 };
 
-const website = process.argv.slice(2)[0];
+console.log(JSON.stringify(environment));
+
+const website = environment.bookScraper.targetWebsite || process.argv.slice(2)[0];
+logger.info(`scraping from target website "${website}"`);
 
 switch (website) {
   case 'tapas':
