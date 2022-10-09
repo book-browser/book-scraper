@@ -1,11 +1,13 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from 'chrome-aws-lambda';
 
 export const startBrowser = async () => {
-  return puppeteer.launch({
+  return chromium.puppeteer.launch({
     headless: true,
+    defaultViewport: chromium.defaultViewport,
     dumpio: true,
-    args: ['--disable-setuid-sandbox'],
+    args: chromium.args,
     ignoreHTTPSErrors: true,
-    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    executablePath: await chromium.executablePath
   });
 };

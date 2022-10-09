@@ -1,17 +1,20 @@
-import { Page } from 'puppeteer';
+import { Browser, Page } from 'puppeteer-core';
 import { startBrowser } from '../browser';
 import script from '../websites/tapas/script';
 import { runScript } from '../websites/scrape';
 
 const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
+  let browser: Browser;
   try {
-    const browser = await startBrowser();
+    browser = await startBrowser();
     const page = await browser.newPage();
     const results = await scrapeFn(page);
-    browser.close();
+
     return results;
   } catch (err) {
     console.error(err);
+  } finally {
+    browser?.close();
   }
 };
 

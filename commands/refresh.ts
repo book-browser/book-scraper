@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer';
+import { Page, Browser } from 'puppeteer-core';
 import { mapEpisodeRequestToEpisode, mapSeriesRequestToSeries, Series } from '../book-browser';
 import { createOrUpdateEpisode, createOrUpdateSeries, findAllSeries } from '../book-browser/api';
 import { startBrowser } from '../browser';
@@ -10,14 +10,16 @@ import script from '../websites/tapas/script';
 const logger = createLogger('refresh.ts');
 
 const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
+  let browser: Browser;
   try {
-    const browser = await startBrowser();
+    browser = await startBrowser();
     const page = await browser.newPage();
     const results = await scrapeFn(page);
-    browser.close();
     return results;
   } catch (err) {
     console.error(JSON.stringify(err.response.data));
+  } finally {
+    browser?.close();
   }
 };
 

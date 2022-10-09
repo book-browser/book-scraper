@@ -1,4 +1,4 @@
-import { ElementHandle, Page } from 'puppeteer';
+import { ElementHandle, Page } from 'puppeteer-core';
 import { infiniteScroll } from '../browser/page';
 import createLogger from '../logging/logger';
 import {
