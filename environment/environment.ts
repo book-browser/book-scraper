@@ -11,5 +11,5 @@ export const environment = <EnvironmentConfiguration>{
   bookScraper: {
     targetWebsite: process.env.BOOK_SCRAPER_TARGET_WEBSITE
   },
-  logLevel: process.env.LOG_LEVEL
+  logLevel: process.env.LOG_LEVEL || 'info'
 };
