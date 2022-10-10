@@ -1,4 +1,6 @@
+console.log('import a1');
 import puppeteer from 'puppeteer-core';
+console.log('import a2');
 import chromium from '@sparticuz/chromium';
 
 export const startBrowser = async () => {

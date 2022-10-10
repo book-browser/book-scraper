@@ -1,8 +1,8 @@
+console.log('import a');
 import { Browser, Page } from 'puppeteer-core';
+console.log('import b');
 import { startBrowser } from '../browser';
-import script from '../websites/tapas/script';
-import { runScript } from '../websites/scrape';
-import { environment } from '../environment/environment';
+console.log('import c');
 import createLogger from '../logging/logger';
 
 const logger = createLogger('commands/scrape.ts');
