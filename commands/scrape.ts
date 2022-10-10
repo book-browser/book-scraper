@@ -17,7 +17,7 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   } catch (err) {
     console.error(err);
   } finally {
-    browser?.close();
+    await browser?.close();
   }
 };
 

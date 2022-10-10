@@ -19,11 +19,12 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   } catch (err) {
     console.error(JSON.stringify(err.response.data));
   } finally {
-    browser?.close();
+    await browser?.close();
   }
 };
 
 const refresh = async () => {
+  logger.info('Refreshing series');
   const seriesList = await scrape((page: Page) => runScript(page, script));
   for await (const series of seriesList) {
     await createOrUpdateSeriesFromSeriesRequest(series);

@@ -3,11 +3,11 @@ import chromium from '@sparticuz/chromium';
 
 export const startBrowser = async () => {
   return puppeteer.launch({
-    headless: true,
+    headless: chromium.headless,
     defaultViewport: chromium.defaultViewport,
-    dumpio: true,
     args: chromium.args,
+    executablePath: await chromium.executablePath,
     ignoreHTTPSErrors: true,
-    executablePath: await chromium.executablePath
+    dumpio: true
   });
 };
