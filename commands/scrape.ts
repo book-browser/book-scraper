@@ -7,7 +7,7 @@ import createLogger from '../logging/logger';
 
 const logger = createLogger('commands/scrape.ts');
 
-const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
+export const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   let browser: Browser;
   try {
     browser = await startBrowser();
@@ -20,16 +20,3 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
     await browser?.close();
   }
 };
-
-const website = environment.bookScraper.targetWebsite || process.argv.slice(2)[0];
-logger.info(`scraping from target website "${website}"`);
-
-switch (website) {
-  case 'tapas':
-    scrape((page: Page) => runScript(page, script))
-      .then(JSON.stringify)
-      .then(console.log);
-    break;
-  default:
-    throw new Error('Unknown website option');
-}
