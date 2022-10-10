@@ -114,7 +114,7 @@ const extractProperty = async (container: ElementHandle, property: ScrapedFieldP
       out = await Promise.all(queryHandle.map((item) => extractProperties(item, property)));
     } else {
       out = extractProperties(queryHandle, property);
-      console.log(await out);
+      logger.debug(await out);
     }
   }
 
@@ -157,18 +157,14 @@ const queryItems = (container: Page | ElementHandle, property: SerializableScrap
 };
 
 const extractItemsValues = (
-  _container: Page | ElementHandle,
+  _container: Element,
   property: SerializableScrapedFieldProperty,
   ...elements: HTMLElement[]
 ) => {
   return elements.map((element) => findPath(element, property.path)) as string[];
 };
 
-const extractItemValue = (
-  _container: Page | ElementHandle,
-  property: SerializableScrapedFieldProperty,
-  element: HTMLElement
-) => {
+const extractItemValue = (_container: Element, property: SerializableScrapedFieldProperty, element: HTMLElement) => {
   return findPath(element, property.path);
 };
 

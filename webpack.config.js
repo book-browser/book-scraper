@@ -1,10 +1,8 @@
 const path = require('path');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
     refresh: './aws/refresh.handler.ts',
     scrape: './aws/scrape.handler.ts'
@@ -27,6 +25,13 @@ module.exports = {
     clean: true,
     libraryTarget: 'commonjs'
   },
-  plugins: [new NodePolyfillPlugin(), new Dotenv({ systemvars: true })],
-  externals: [nodeExternals()]
+  target: 'node',
+  devtool: 'eval-source-map',
+  plugins: [new Dotenv({ systemvars: true })],
+  externals: [
+    {
+      'utf-8-validate': 'commonjs utf-8-validate',
+      bufferutil: 'commonjs bufferutil'
+    }
+  ]
 };

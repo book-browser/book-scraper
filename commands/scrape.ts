@@ -21,8 +21,6 @@ const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
   }
 };
 
-console.log(JSON.stringify(environment));
-
 const website = environment.bookScraper.targetWebsite || process.argv.slice(2)[0];
 logger.info(`scraping from target website "${website}"`);
 

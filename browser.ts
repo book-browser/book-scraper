@@ -1,8 +1,8 @@
 import puppeteer from 'puppeteer-core';
-import chromium from 'chrome-aws-lambda';
+import chromium from '@sparticuz/chromium';
 
 export const startBrowser = async () => {
-  return chromium.puppeteer.launch({
+  return puppeteer.launch({
     headless: true,
     defaultViewport: chromium.defaultViewport,
     dumpio: true,
