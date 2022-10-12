@@ -27,11 +27,5 @@ module.exports = {
   },
   target: 'node',
   devtool: 'eval-source-map',
-  plugins: [new Dotenv({ systemvars: true })],
-  externals: [
-    {
-      'utf-8-validate': 'commonjs utf-8-validate',
-      bufferutil: 'commonjs bufferutil'
-    }
-  ]
+  plugins: [new Dotenv({ systemvars: true })]
 };

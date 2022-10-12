@@ -18,10 +18,12 @@
   "dependencies": {
     "@sparticuz/chromium": "^107.0.0",
     "axios": "^0.26.1",
+    "bufferutil": "^4.0.6",
     "dotenv": "^16.0.3",
     "moment": "^2.29.3",
     "nested-property": "^4.0.0",
     "puppeteer-core": "^18.2.1",
+    "utf-8-validate": "^5.0.9",
     "uuid": "^8.3.2",
     "winston": "^3.7.2"
   },
