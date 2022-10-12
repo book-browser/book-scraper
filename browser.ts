@@ -5,7 +5,7 @@ import chromium from '@sparticuz/chromium';
 
 export const startBrowser = async () => {
   return launch({
-    headless: chromium.headless,
+    headless: true,
     defaultViewport: chromium.defaultViewport,
     args: chromium.args,
     executablePath: await chromium.executablePath,
