@@ -27,6 +27,10 @@ exports.handler = (event, context, callback) => {
         .then((str) => {
           console.log(str);
           callback(null, 'success');
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log(e?.message);
         });
       break;
     default:
