@@ -14,6 +14,7 @@ import script from '../websites/tapas/script';
 const logger = createLogger('aws/scrape.handler.ts');
 
 exports.handler = (event, context, callback) => {
+  console.log('EVENT: \n' + JSON.stringify(event, null, 2));
   logger.info('handling aws event in scrape');
   require('../commands/scrape');
 
