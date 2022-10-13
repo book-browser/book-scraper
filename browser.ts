@@ -3,6 +3,7 @@ import { launch } from 'puppeteer-core';
 console.log('import a2');
 import chromium from '@sparticuz/chromium';
 const LambdaFS = require('lambdafs');
+import fs from 'fs';
 
 const getExecutablePath = async () => {
   if (process.env.IS_LOCAL) {
@@ -19,6 +20,13 @@ const getExecutablePath = async () => {
 };
 
 export const startBrowser = async () => {
+  const workingDir = fs.readdirSync('./');
+  console.log(JSON.stringify(workingDir));
+  const optDir = fs.readdirSync('/opt');
+  console.log(JSON.stringify(optDir));
+  const binDir = fs.readdirSync('/opt/bin');
+  console.log(JSON.stringify(binDir));
+
   return launch({
     headless: true,
     defaultViewport: chromium.defaultViewport,
