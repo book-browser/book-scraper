@@ -6,9 +6,10 @@ const LambdaFS = require('lambdafs');
 import fs from 'fs';
 
 const getExecutablePath = async () => {
-  if (process.env.IS_LOCAL) {
-    return chromium.executablePath;
-  }
+  console.log(process.env.IS_LOCAL);
+  // if (process.env.IS_LOCAL === 'true') {
+  //   return chromium.executablePath;
+  // }
 
   const promises = [LambdaFS.inflate(`/opt/bin/chromium.br`), LambdaFS.inflate(`/opt/bin/swiftshader.tar.br`)];
 
