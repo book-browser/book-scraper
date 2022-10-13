@@ -20,6 +20,8 @@ const getExecutablePath = async () => {
 };
 
 export const startBrowser = async () => {
+  const path = await getExecutablePath();
+  console.log(path);
   const workingDir = fs.readdirSync('./');
   console.log(JSON.stringify(workingDir));
   const optDir = fs.readdirSync('/opt');
@@ -31,7 +33,7 @@ export const startBrowser = async () => {
     headless: true,
     defaultViewport: chromium.defaultViewport,
     args: chromium.args,
-    executablePath: await getExecutablePath(),
+    executablePath: path,
     ignoreHTTPSErrors: true,
     dumpio: true
   });
