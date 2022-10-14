@@ -5,13 +5,13 @@
   "private": true,
   "scripts": {
     "scrape:tapas": "ts-node ./commands/scrape.ts tapas",
-    "scrape:aws": "node -e \"require('./dist/scrape.js').handler()\"",
+    "scrape:aws": "node -e \"require('./dist/aws/scrape.handler.js').handler()\"",
     "refresh": "ts-node ./commands/refresh.ts",
-    "refresh:aws": "node -e \"require('./dist/refresh.js').handler()\"",
+    "refresh:aws": "node -e \"require('./dist/aws/refresh.handler.js').handler()\"",
     "testt": "ts-node ./commands/test.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --config .prettierrc './**/*.ts' --write",
-    "build": "webpack"
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",

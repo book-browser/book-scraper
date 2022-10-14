@@ -1,20 +1,8 @@
-console.log('import 1');
 import { Page } from 'puppeteer-core';
-console.log('import 2');
-
-console.log('import 3');
 import { environment } from '../environment/environment';
-console.log('import 4');
 import createLogger from '../logging/logger';
-console.log('import 5');
 import { runScript } from '../websites/scrape';
-console.log('import 6');
 import script from '../websites/tapas/script';
-
-process.on('uncaughtException', (err, origin) => {
-  console.log(err, err?.message);
-});
-
 const logger = createLogger('aws/scrape.handler.ts');
 
 exports.handler = (event, context, callback) => {

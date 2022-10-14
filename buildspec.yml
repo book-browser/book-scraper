@@ -6,9 +6,11 @@ phases:
       nodejs: 14.x
   build:
     commands:
+      - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
       - npm ci
       - npm run build
 artifacts:
   files:
     - 'dist/**/*'
+    - 'node_modules/**'
     - 'package.json'
