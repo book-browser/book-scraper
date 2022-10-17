@@ -8,6 +8,7 @@ phases:
     commands:
       - export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
       - npm ci --production
+      - npm i --save-dev --save-exact typescript
       - npm run build
 artifacts:
   files:
