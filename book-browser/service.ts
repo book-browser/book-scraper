@@ -1,37 +1,12 @@
-import { Page, Browser } from 'puppeteer-core';
-import { mapEpisodeRequestToEpisode, mapSeriesRequestToSeries, Series } from '../book-browser';
-import { createOrUpdateEpisode, createOrUpdateSeries, findAllSeries } from '../book-browser/api';
-import { startBrowser } from '../browser';
 import createLogger from '../logging/logger';
-// import { series as seriesList } from '../series';
-import { EpisodeRequest, runScript, SeriesRequest } from '../websites';
-import script from '../websites/tapas/script';
+import { EpisodeRequest, SeriesRequest } from '../websites';
+import { createOrUpdateEpisode, createOrUpdateSeries, findAllSeries } from './api';
+import { mapEpisodeRequestToEpisode, mapSeriesRequestToSeries } from './mapper';
+import { Series } from './types';
 
-const logger = createLogger('refresh.ts');
+const logger = createLogger('service.ts');
 
-const scrape = async <E>(scrapeFn: (page: Page) => Promise<E>) => {
-  let browser: Browser;
-  try {
-    browser = await startBrowser();
-    const page = await browser.newPage();
-    const results = await scrapeFn(page);
-    return results;
-  } catch (err) {
-    console.error(JSON.stringify(err.response.data));
-  } finally {
-    await browser?.close();
-  }
-};
-
-const refresh = async () => {
-  logger.info('Refreshing series');
-  const seriesList = await scrape((page: Page) => runScript(page, script));
-  for await (const series of seriesList) {
-    await createOrUpdateSeriesFromSeriesRequest(series);
-  }
-};
-
-const createOrUpdateSeriesFromSeriesRequest = async (seriesRequest: SeriesRequest) => {
+export const createOrUpdateSeriesFromSeriesRequest = async (seriesRequest: SeriesRequest) => {
   logger.debug(`seriesRequest ${JSON.stringify({ seriesRequest }, null, 2)}`);
   const seriesList = await findAllSeries({ link: seriesRequest.seriesUrl });
   if (seriesList.items.length > 1) {
@@ -65,7 +40,3 @@ const createOrUpdateEpisodeFromEpisodeRequest = async (episodeRequest: EpisodeRe
   const episode = await mapEpisodeRequestToEpisode(episodeRequest, series);
   await createOrUpdateEpisode(episode);
 };
-
-refresh()
-  .then()
-  .catch((err) => logger.error(err));
