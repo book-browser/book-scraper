@@ -22,8 +22,10 @@ export const createOrUpdateSeriesFromSeriesRequest = async (seriesRequest: Serie
 
   const finalSeries = await createOrUpdateSeries(series);
 
-  for await (const episodeRequest of seriesRequest.episodes) {
-    await createOrUpdateEpisodeFromEpisodeRequest(episodeRequest, finalSeries);
+  if (seriesRequest.episodes) {
+    for await (const episodeRequest of seriesRequest.episodes) {
+      await createOrUpdateEpisodeFromEpisodeRequest(episodeRequest, finalSeries);
+    }
   }
 };
 

@@ -59,29 +59,6 @@ export default async (tasks) => {
           selectorAll: '.section--right .name',
           path: 'textContent',
           formatters: ['trim']
-        },
-        episodes: {
-          selectorAll: '.episode-item',
-          filter: (elem) => !elem.innerHTML.includes('sp-ico-schedule-wht-s'),
-          attributes: {
-            title: {
-              selector: '.title__body',
-              path: 'textContent',
-              formatters: ['trim']
-            },
-            thumbnailUrl: {
-              selector: '.thumb img',
-              path: 'src'
-            },
-            episodeUrl: {
-              path: 'href'
-            },
-            releaseDate: {
-              selector: '.additional',
-              path: 'firstChild.textContent',
-              formatters: ['trim', (datestr) => moment(datestr, 'MMM DD, YYYY').toISOString()]
-            }
-          }
         }
       }
     });
