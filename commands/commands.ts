@@ -2,12 +2,10 @@ import { Browser, Page } from 'puppeteer-core';
 import { createOrUpdateSeriesFromSeriesRequest } from '../book-browser/service';
 import { startBrowser } from '../browser';
 import { environment } from '../environment/environment';
-import createLogger from '../logging/logger';
-// import { series as seriesList } from '../series';
+import { handleRecoverableError } from '../error/error';
+import logger from '../logging/logger';
 import { runScript } from '../websites';
 import { getScrapeFunction } from '../websites/websites';
-
-const logger = createLogger('refresh.ts');
 
 const website: string | undefined = environment.bookScraper.targetWebsite || process.argv.slice(2)[0];
 
@@ -15,8 +13,12 @@ export const refresh = async () => {
   logger.info(`refreshing series from target website "${website}"`);
   const script = getWebsiteScrapeScript();
   const seriesList = await runInBrowser((page: Page) => runScript(page, script));
-  for await (const series of seriesList) {
-    await createOrUpdateSeriesFromSeriesRequest(series);
+  for await (const seriesItem of seriesList) {
+    try {
+      await createOrUpdateSeriesFromSeriesRequest(seriesItem);
+    } catch (e) {
+      handleRecoverableError(e);
+    }
   }
 };
 

@@ -1,10 +1,8 @@
-import createLogger from '../logging/logger';
+import logger from '../logging/logger';
 import { EpisodeRequest, SeriesRequest } from '../websites';
 import { createOrUpdateEpisode, createOrUpdateSeries, findAllSeries } from './api';
 import { mapEpisodeRequestToEpisode, mapSeriesRequestToSeries } from './mapper';
 import { Series } from './types';
-
-const logger = createLogger('service.ts');
 
 export const createOrUpdateSeriesFromSeriesRequest = async (seriesRequest: SeriesRequest) => {
   logger.debug(`seriesRequest ${JSON.stringify({ seriesRequest }, null, 2)}`);

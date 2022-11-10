@@ -1,6 +1,6 @@
 import { ElementHandle, Page } from 'puppeteer-core';
 import { infiniteScroll } from '../browser/page';
-import createLogger from '../logging/logger';
+import logger from '../logging/logger';
 import {
   InfiniteScrollProperties,
   PageProperties,
@@ -11,8 +11,6 @@ import {
   SerializableScrapedFieldProperty,
   SeriesScrapeProperties
 } from './types';
-
-const logger = createLogger('test.ts');
 
 export const runScript = async (page: Page, script: ScrapeScript) => {
   logger.info('running scrape script');

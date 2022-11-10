@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { environment } from '../environment/environment';
 import { Episode, Page, Party, Series, SeriesQuery } from './types';
-import createLogger from '../logging/logger';
-
-const logger = createLogger('api.ts');
+import logger from '../logging/logger';
 
 axios.interceptors.request.use((request) => {
   if (request.method.toLowerCase() === 'get') {

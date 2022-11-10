@@ -17,7 +17,7 @@ export default async (tasks) => {
     }
   });
 
-  for await (const seriesUrl of seriesUrls.slice(0, 2)) {
+  for await (const seriesUrl of seriesUrls) {
     await tasks.series({
       page: {
         url: `${seriesUrl}/info`,

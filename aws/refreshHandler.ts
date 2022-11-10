@@ -1,7 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { refresh } from '../commands/commands';
-import createLogger from '../logging/logger';
-const logger = createLogger('aws/refresh.handler.ts');
+import logger from '../logging/logger';
 
 const handler: APIGatewayProxyHandler = (event, context, callback) => {
   logger.info(`consuming aws event in refresh handler ${JSON.stringify(event, null, 2)}`);

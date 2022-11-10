@@ -1,12 +1,10 @@
 import moment from 'moment';
 import { getBase64FromUrl } from '../image';
-import createLogger from '../logging/logger';
+import logger from '../logging/logger';
 import { EpisodeRequest, SeriesRequest } from '../websites';
 import { findParties } from './api';
 import { GENRES } from './constants';
 import { Creator, Episode, Link, Publisher, Series } from './types';
-
-const logger = createLogger('mapper.ts');
 
 export const mapSeriesRequestToSeries = async (seriesRequest: SeriesRequest, series?: Series) => {
   return <Partial<Series>>{
