@@ -23,11 +23,6 @@ export default async (tasks) => {
         url: `${seriesUrl}/info`,
         selector: '.series-root'
       },
-      infiniteScroll: {
-        active: true,
-        loadingSelector: '.js-episode-loading-indicator',
-        hiddenClass: 'hidden'
-      },
       attributes: {
         publishers: () => ['tapas'],
         title: {

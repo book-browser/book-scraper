@@ -6,7 +6,7 @@ global.errorCount = 0;
 
 export const handleRecoverableError = (error) => {
   if (error?.response?.data) {
-    logger.error(JSON.stringify(error.response.data, null, 2));
+    logger.error(`Response error: ${JSON.stringify(error.response.data, null, 2)}`);
   }
   logger.error(error);
   global.errorCount = global.errorCount + 1;

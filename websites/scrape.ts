@@ -41,7 +41,7 @@ const scrapeValues = async (page: Page, properties: ScrapeProperties) => {
   await waitForInfiniteScroll(page, properties.infiniteScroll);
 
   if (typeof properties.values === 'object') {
-    return extractProperty(await page.$('body'), properties.values);
+    return extractProperty(await page.$('html'), properties.values);
   }
   return properties.values();
 };
@@ -51,7 +51,7 @@ const scrapeSeries = async (page: Page, properties: SeriesScrapeProperties) => {
   logger.debug(`series scrape properties: ${JSON.stringify(properties, null, 2)}`);
   await navigateToPage(page, properties.page);
   await waitForInfiniteScroll(page, properties.infiniteScroll);
-  return extractProperty(await page.$('body'), { attributes: properties.attributes });
+  return extractProperty(await page.$('html'), { attributes: properties.attributes });
 };
 
 const navigateToPage = async <E>(page: Page, properties: PageProperties) => {
@@ -59,7 +59,9 @@ const navigateToPage = async <E>(page: Page, properties: PageProperties) => {
   logger.debug(`page properties: ${JSON.stringify(properties, null, 2)}`);
   await page.goto(properties.url);
   await page.addScriptTag({ content: `${findPath}` });
-  await page.waitForSelector(properties.selector);
+  if (properties.selector) {
+    await page.waitForSelector(properties.selector);
+  }
 };
 
 const waitForInfiniteScroll = async (page: Page, properties: InfiniteScrollProperties) => {
